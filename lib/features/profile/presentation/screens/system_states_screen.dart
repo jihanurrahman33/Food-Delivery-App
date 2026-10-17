@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/empty_view.dart';
 import '../../../../routes/app_routes.dart';
@@ -62,8 +63,7 @@ class _SystemStatesScreenState extends State<SystemStatesScreen>
                   'Please check your Wi-Fi or mobile data connection and try refreshing.',
               buttonText: 'Try Again',
               onButtonPressed: () {
-                Get.snackbar('Network', 'Reconnected successfully!',
-                    backgroundColor: Colors.green, colorText: Colors.white);
+                AppSnackbar.success('Network', 'Reconnected successfully!');
                 Get.offAllNamed(AppRoutes.mainNav);
               },
             ),
@@ -76,8 +76,7 @@ class _SystemStatesScreenState extends State<SystemStatesScreen>
                   'Our servers are currently undergoing routine maintenance to bring you faster speeds and new features.',
               buttonText: 'Check Service Status',
               onButtonPressed: () {
-                Get.snackbar('Status', 'All systems operational!',
-                    backgroundColor: Colors.blueAccent, colorText: Colors.white);
+                AppSnackbar.info('Status', 'All systems operational!');
               },
             ),
           ],

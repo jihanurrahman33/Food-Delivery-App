@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../routes/app_routes.dart';
@@ -90,7 +91,7 @@ class ChefMenuScreen extends GetView<ChefController> {
                           value: true,
                           activeColor: AppColors.accentGreen,
                           onChanged: (val) {
-                            Get.snackbar(
+                            AppSnackbar.info(
                               'Inventory Updated',
                               '${dish.name} set to ${val ? "In Stock" : "Sold Out"}',
                               duration: const Duration(seconds: 1),

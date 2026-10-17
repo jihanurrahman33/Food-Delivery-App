@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../routes/app_routes.dart';
 
 class ScreenCatalogScreen extends StatefulWidget {
@@ -583,7 +584,7 @@ class _ScreenCatalogScreenState extends State<ScreenCatalogScreen> {
                           onTap: () {
                             final route = item['route'] as String;
                             if (route == AppRoutes.screenCatalog) {
-                              Get.snackbar('Already here', 'You are currently on the Screen Catalog!');
+                              AppSnackbar.info('Already here', 'You are currently on the Screen Catalog!');
                             } else {
                               Get.toNamed(route);
                             }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../domain/entities/restaurant_entity.dart';
 import '../../domain/repositories/restaurant_repository.dart';
 
@@ -105,12 +106,11 @@ class RestaurantController extends GetxController {
       if (r != null) {
         currentRestaurant.value = r;
       }
-      Get.snackbar(
-        updated ? 'Removed' : 'Saved',
-        updated ? 'Removed from favorites' : 'Saved to favorite restaurants',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 1),
-      );
+      if (updated) {
+        AppSnackbar.info('Removed', 'Removed from favorites');
+      } else {
+        AppSnackbar.success('Saved', 'Saved to favorite restaurants');
+      }
     }
   }
 }

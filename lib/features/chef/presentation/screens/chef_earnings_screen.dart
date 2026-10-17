@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -107,11 +108,9 @@ class ChefEarningsScreen extends GetView<ChefController> {
                 text: 'REQUEST WITHDRAWAL',
                 icon: const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
                 onPressed: () {
-                  Get.snackbar(
+                  AppSnackbar.success(
                     'Withdrawal Requested',
                     'Your funds are being transferred to Chase Bank •••• 6712',
-                    backgroundColor: AppColors.accentGreen,
-                    colorText: Colors.white,
                   );
                 },
               ),

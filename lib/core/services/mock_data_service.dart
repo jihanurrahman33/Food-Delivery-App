@@ -5,7 +5,6 @@ import '../../features/cart_checkout/domain/entities/payment_card_entity.dart';
 import '../../features/home/data/models/banner_model.dart';
 import '../../features/home/data/models/category_model.dart';
 import '../../features/orders_tracking/domain/entities/order_entity.dart';
-import '../../features/restaurant/data/models/food_item_model.dart';
 import '../../features/restaurant/data/models/restaurant_model.dart';
 import '../../features/restaurant/domain/entities/restaurant_entity.dart';
 

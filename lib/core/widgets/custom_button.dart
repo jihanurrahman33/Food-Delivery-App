@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_dimens.dart';
 import '../theme/text_styles.dart';
+import 'bouncing_button.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -25,8 +27,8 @@ class CustomButton extends StatelessWidget {
     this.color,
     this.textColor,
     this.width,
-    this.height = 56,
-    this.borderRadius = 14,
+    this.height = AppDimens.buttonHeight,
+    this.borderRadius = AppDimens.radius14,
     this.icon,
   });
 
@@ -38,36 +40,39 @@ class CustomButton extends StatelessWidget {
         ? (textColor ?? AppColors.primary)
         : (textColor ?? Colors.white);
 
-    return SizedBox(
-      width: width ?? double.infinity,
-      height: height,
-      child: isOutlined
-          ? OutlinedButton(
-              onPressed: isLoading ? null : onPressed,
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  color: effectiveBg,
-                  width: 1.5,
+    return BouncingButton(
+      onTap: isLoading ? null : onPressed,
+      child: SizedBox(
+        width: width ?? double.infinity,
+        height: height,
+        child: isOutlined
+            ? OutlinedButton(
+                onPressed: isLoading ? null : onPressed,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: effectiveBg,
+                    width: 1.5,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
+                child: _buildChild(effectiveTextColor),
+              )
+            : ElevatedButton(
+                onPressed: isLoading ? null : onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: effectiveBgColor,
+                  foregroundColor: effectiveTextColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: AppDimens.space20),
                 ),
+                child: _buildChild(effectiveTextColor),
               ),
-              child: _buildChild(effectiveTextColor),
-            )
-          : ElevatedButton(
-              onPressed: isLoading ? null : onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: effectiveBgColor,
-                foregroundColor: effectiveTextColor,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
-              child: _buildChild(effectiveTextColor),
-            ),
+      ),
     );
   }
 
@@ -93,7 +98,7 @@ class CustomButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           iconWidget,
-          const SizedBox(width: 10),
+          const SizedBox(width: AppDimens.space10),
           Text(text, style: AppTextStyles.button(color: textColorVal)),
         ],
       );

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
-import '../../../../core/widgets/custom_button.dart';
 import '../../../../routes/app_routes.dart';
 import '../controllers/checkout_controller.dart';
 

@@ -30,7 +30,19 @@ class AppColors {
   static const Color cardDark = Color(0xFF1E2337);
   static const Color inputDark = Color(0xFF242A42);
 
-  // Convenient aliases
+  // Glassmorphic / Apple Frosted Glass Tokens
+  static const Color glassBackgroundLight = Color(0xCCFFFFFF);
+  static const Color glassBackgroundDark = Color(0xB3181C2E);
+  static const Color glassBorderLight = Color(0x33FFFFFF);
+  static const Color glassBorderDark = Color(0x22FFFFFF);
+
+  // Skeleton Shimmer Tokens
+  static const Color shimmerBaseLight = Color(0xFFE2E8F0);
+  static const Color shimmerHighlightLight = Color(0xFFF8FAFC);
+  static const Color shimmerBaseDark = Color(0xFF23283E);
+  static const Color shimmerHighlightDark = Color(0xFF333A56);
+
+  // Convenient Aliases
   static const Color textPrimary = textPrimaryLight;
   static const Color textSecondary = textSecondaryLight;
   static const Color textTertiary = textTertiaryLight;
@@ -58,25 +70,39 @@ class AppColors {
   static const Color dividerLight = Color(0xFFEEF2F6);
   static const Color dividerDark = Color(0xFF232738);
 
-  // Status colors
+  // Status Colors
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
   static const Color info = Color(0xFF3B82F6);
 
+  // Snackbar Toast Glass Gradients
+  static const Color snackbarSuccess = Color(0xFF059669);
+  static const Color snackbarError = Color(0xFFDC2626);
+  static const Color snackbarWarning = Color(0xFFD97706);
+  static const Color snackbarInfo = Color(0xFF2563EB);
+
   // Shadows
   static List<BoxShadow> get cardShadow => [
         BoxShadow(
-          color: const Color(0xFF969696).withValues(alpha: 0.12),
-          blurRadius: 20,
-          offset: const Offset(0, 10),
+          color: const Color(0xFF969696).withValues(alpha: 0.10),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
         ),
       ];
 
   static List<BoxShadow> get buttonShadow => [
         BoxShadow(
-          color: primary.withValues(alpha: 0.35),
-          blurRadius: 18,
+          color: primary.withValues(alpha: 0.32),
+          blurRadius: 16,
+          offset: const Offset(0, 6),
+        ),
+      ];
+
+  static List<BoxShadow> get glassShadow => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.12),
+          blurRadius: 24,
           offset: const Offset(0, 8),
         ),
       ];

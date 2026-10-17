@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/utils/app_snackbar.dart';
 
 class RiderController extends GetxController {
   final RxBool isOnline = true.obs;
@@ -35,26 +35,23 @@ class RiderController extends GetxController {
 
   void toggleOnlineStatus(bool value) {
     isOnline.value = value;
-    Get.snackbar(
-      'Rider Status',
-      value ? 'You are now ONLINE and ready for requests' : 'You are now OFFLINE',
-      backgroundColor: value ? Colors.green : Colors.grey,
-      colorText: Colors.white,
-    );
+    if (value) {
+      AppSnackbar.success('Rider Status', 'You are now ONLINE and ready for requests');
+    } else {
+      AppSnackbar.info('Rider Status', 'You are now OFFLINE');
+    }
   }
 
   void acceptDelivery(Map<String, dynamic> delivery) {
     activeDelivery.value = delivery;
     availableDeliveries.remove(delivery);
     deliveryStep.value = 'Heading to Restaurant';
-    Get.snackbar('Trip Accepted', 'Navigate to ${delivery['restaurantName']} for pickup.',
-        backgroundColor: Colors.blueAccent, colorText: Colors.white);
+    AppSnackbar.info('Trip Accepted', 'Navigate to ${delivery['restaurantName']} for pickup.');
   }
 
   void confirmPickup() {
     deliveryStep.value = 'Picked Up';
-    Get.snackbar('Order Picked Up', 'Head over to customer destination.',
-        backgroundColor: Colors.orange, colorText: Colors.white);
+    AppSnackbar.info('Order Picked Up', 'Head over to customer destination.');
   }
 
   void completeDelivery() {
@@ -64,8 +61,7 @@ class RiderController extends GetxController {
       todayTrips.value += 1;
       activeDelivery.value = null;
       deliveryStep.value = 'Heading to Restaurant';
-      Get.snackbar('Delivery Complete! 🎉', 'You earned \$${payout.toStringAsFixed(2)}',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      AppSnackbar.success('Delivery Complete! 🎉', 'You earned \$${payout.toStringAsFixed(2)}');
     }
   }
 }

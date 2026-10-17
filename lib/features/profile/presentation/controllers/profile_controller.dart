@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 
@@ -71,11 +71,9 @@ class ProfileController extends GetxController {
   void switchRole(String role) {
     activeRole.value = role;
     storageService.userRole = role;
-    Get.snackbar(
+    AppSnackbar.info(
       'Role Switched',
       'Switched view to ${role.capitalizeFirst} Mode',
-      backgroundColor: AppColors.primary,
-      colorText: Colors.white,
     );
   }
 
@@ -93,8 +91,7 @@ class ProfileController extends GetxController {
       await authRepository.updateUserProfile(updated);
       currentUser.value = updated;
       Get.back();
-      Get.snackbar('Profile Updated', 'Your profile details have been saved.',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      AppSnackbar.success('Profile Updated', 'Your profile details have been saved.');
     }
   }
 

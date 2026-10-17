@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:food_delivery_app/core/utils/currency_formatter.dart';
 import 'package:food_delivery_app/core/utils/validators.dart';
+import 'package:food_delivery_app/core/widgets/app_shimmer.dart';
+import 'package:food_delivery_app/core/widgets/bouncing_button.dart';
 import 'package:food_delivery_app/features/cart_checkout/domain/entities/cart_item_entity.dart';
 import 'package:food_delivery_app/features/restaurant/domain/entities/restaurant_entity.dart';
 
@@ -68,6 +71,41 @@ void main() {
 
       // (9.99 + 1.50) * 2 = 11.49 * 2 = 22.98
       expect(cartItem.totalPrice, closeTo(22.98, 0.001));
+    });
+  });
+
+  group('Apple Micro-Interactions & Shimmer Tests', () {
+    testWidgets('BouncingButton renders and responds to tap', (tester) async {
+      bool tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BouncingButton(
+              onTap: () => tapped = true,
+              child: const Text('Apple Button'),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Apple Button'), findsOneWidget);
+      await tester.tap(find.text('Apple Button'));
+      await tester.pumpAndSettle();
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('AppShimmer renders shimmer container without error', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppShimmer(
+              child: SizedBox(width: 100, height: 100),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(AppShimmer), findsOneWidget);
     });
   });
 }

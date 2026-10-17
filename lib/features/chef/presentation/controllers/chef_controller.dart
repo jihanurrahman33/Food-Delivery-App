@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/services/mock_data_service.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../restaurant/domain/entities/restaurant_entity.dart';
 
 class ChefController extends GetxController {
@@ -60,12 +61,11 @@ class ChefController extends GetxController {
 
   void toggleKitchenStatus(bool value) {
     isKitchenOpen.value = value;
-    Get.snackbar(
-      'Kitchen Status',
-      value ? 'Your kitchen is now OPEN for orders' : 'Kitchen is closed',
-      backgroundColor: value ? Colors.green : Colors.redAccent,
-      colorText: Colors.white,
-    );
+    if (value) {
+      AppSnackbar.success('Kitchen Status', 'Your kitchen is now OPEN for orders');
+    } else {
+      AppSnackbar.warning('Kitchen Status', 'Kitchen is currently closed');
+    }
   }
 
   void acceptOrder(String orderId) {
@@ -73,8 +73,7 @@ class ChefController extends GetxController {
     if (idx != -1) {
       kitchenOrders[idx]['status'] = 'Preparing';
       kitchenOrders.refresh();
-      Get.snackbar('Order Accepted', 'Order #$orderId moved to Preparing',
-          backgroundColor: Colors.blueAccent, colorText: Colors.white);
+      AppSnackbar.info('Order Accepted', 'Order #$orderId moved to Preparing');
     }
   }
 
@@ -83,23 +82,20 @@ class ChefController extends GetxController {
     if (idx != -1) {
       kitchenOrders[idx]['status'] = 'Ready for Pickup';
       kitchenOrders.refresh();
-      Get.snackbar('Order Ready', 'Delivery rider notified for pickup!',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      AppSnackbar.success('Order Ready', 'Delivery rider notified for pickup!');
     }
   }
 
   void rejectOrder(String orderId) {
     kitchenOrders.removeWhere((o) => o['id'] == orderId);
-    Get.snackbar('Order Declined', 'Order #$orderId was declined',
-        backgroundColor: Colors.redAccent, colorText: Colors.white);
+    AppSnackbar.warning('Order Declined', 'Order #$orderId was declined');
   }
 
   void addNewDish() {
     final name = dishNameController.text.trim();
     final priceStr = dishPriceController.text.trim();
     if (name.isEmpty || priceStr.isEmpty) {
-      Get.snackbar('Required', 'Please fill in dish name and price',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.warning('Required', 'Please fill in dish name and price');
       return;
     }
 
@@ -133,7 +129,6 @@ class ChefController extends GetxController {
     dishDescriptionController.clear();
 
     Get.back();
-    Get.snackbar('Dish Added', '$name has been added to your menu!',
-        backgroundColor: Colors.green, colorText: Colors.white);
+    AppSnackbar.success('Dish Added', '$name has been added to your menu!');
   }
 }

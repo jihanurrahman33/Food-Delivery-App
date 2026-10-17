@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../routes/app_routes.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -67,10 +68,7 @@ class AuthController extends GetxController {
     final password = passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      Get.snackbar('Required Fields', 'Please enter your email and password.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white);
+      AppSnackbar.warning('Required Fields', 'Please enter your email and password.');
       return;
     }
 
@@ -80,8 +78,7 @@ class AuthController extends GetxController {
       _currentUser.value = user;
       Get.offAllNamed(AppRoutes.mainNav);
     } catch (e) {
-      Get.snackbar('Error', 'Login failed: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM);
+      AppSnackbar.error('Login Failed', e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -95,18 +92,12 @@ class AuthController extends GetxController {
     final confirmPass = confirmPasswordController.text;
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      Get.snackbar('Required Fields', 'Please complete all required fields.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white);
+      AppSnackbar.warning('Required Fields', 'Please complete all required fields.');
       return;
     }
 
     if (password != confirmPass) {
-      Get.snackbar('Password Mismatch', 'Passwords do not match.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white);
+      AppSnackbar.warning('Password Mismatch', 'Passwords do not match.');
       return;
     }
 
@@ -116,8 +107,7 @@ class AuthController extends GetxController {
       _currentUser.value = user;
       Get.toNamed(AppRoutes.verification, arguments: email);
     } catch (e) {
-      Get.snackbar('Error', 'Signup failed: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM);
+      AppSnackbar.error('Signup Failed', e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -125,8 +115,7 @@ class AuthController extends GetxController {
 
   Future<void> verifyOtp() async {
     if (otpCode.length < 4) {
-      Get.snackbar('Invalid Code', 'Please enter the complete 4-digit code.',
-          snackPosition: SnackPosition.BOTTOM);
+      AppSnackbar.warning('Invalid Code', 'Please enter the complete 4-digit code.');
       return;
     }
 
@@ -136,9 +125,10 @@ class AuthController extends GetxController {
       if (success) {
         Get.offAllNamed(AppRoutes.locationAccess);
       } else {
-        Get.snackbar('Invalid Code', 'The code entered is incorrect.',
-            snackPosition: SnackPosition.BOTTOM);
+        AppSnackbar.error('Invalid Code', 'The code entered is incorrect.');
       }
+    } catch (e) {
+      AppSnackbar.error('Verification Failed', e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -147,8 +137,7 @@ class AuthController extends GetxController {
   Future<void> sendForgotPassword() async {
     final email = emailController.text.trim();
     if (email.isEmpty) {
-      Get.snackbar('Email Required', 'Please enter your registered email address.',
-          snackPosition: SnackPosition.BOTTOM);
+      AppSnackbar.warning('Email Required', 'Please enter your registered email address.');
       return;
     }
 
@@ -156,6 +145,8 @@ class AuthController extends GetxController {
       isLoading.value = true;
       await authRepository.sendOtp(email);
       Get.toNamed(AppRoutes.resetPassword);
+    } catch (e) {
+      AppSnackbar.error('Request Failed', e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -166,23 +157,22 @@ class AuthController extends GetxController {
     final confirm = confirmPasswordController.text;
 
     if (password.length < 6) {
-      Get.snackbar('Weak Password', 'Password must be at least 6 characters.',
-          snackPosition: SnackPosition.BOTTOM);
+      AppSnackbar.warning('Weak Password', 'Password must be at least 6 characters.');
       return;
     }
 
     if (password != confirm) {
-      Get.snackbar('Mismatch', 'Passwords do not match.',
-          snackPosition: SnackPosition.BOTTOM);
+      AppSnackbar.warning('Mismatch', 'Passwords do not match.');
       return;
     }
 
     try {
       isLoading.value = true;
       await authRepository.resetPassword(password);
-      Get.snackbar('Success', 'Password has been successfully updated.',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      AppSnackbar.success('Success', 'Password has been successfully updated.');
       Get.offAllNamed(AppRoutes.login);
+    } catch (e) {
+      AppSnackbar.error('Reset Failed', e.toString());
     } finally {
       isLoading.value = false;
     }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/app_snackbar.dart';
+import '../../../../routes/app_routes.dart';
 import '../../../restaurant/domain/entities/restaurant_entity.dart';
 import '../../domain/entities/cart_item_entity.dart';
 
@@ -90,15 +92,10 @@ class CartController extends GetxController {
       );
     }
 
-    Get.snackbar(
-      'Added to Cart',
-      '${foodItem.name} added to your basket',
-      snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 2),
-      backgroundColor: Colors.black87,
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
+    AppSnackbar.cartAdded(
+      itemName: foodItem.name,
+      price: foodItem.price,
+      onCheckout: () => Get.toNamed(AppRoutes.cart),
     );
   }
 
@@ -146,16 +143,13 @@ class CartController extends GetxController {
     if (clean == 'SAVE20' || clean == 'DISCOUNT20') {
       appliedPromoCode.value = clean;
       promoDiscountRate.value = 0.20;
-      Get.snackbar('Promo Applied', '20% discount has been applied!',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      AppSnackbar.success('Promo Applied', '20% discount has been applied!');
     } else if (clean == 'WELCOME50') {
       appliedPromoCode.value = clean;
       promoDiscountRate.value = 0.50;
-      Get.snackbar('Promo Applied', '50% discount has been applied!',
-          backgroundColor: Colors.green, colorText: Colors.white);
+      AppSnackbar.success('Promo Applied', '50% discount has been applied!');
     } else {
-      Get.snackbar('Invalid Coupon', 'Code "$code" is not valid or expired.',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.error('Invalid Coupon', 'Code "$code" is not valid or expired.');
     }
   }
 

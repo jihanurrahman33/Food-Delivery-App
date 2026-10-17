@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/custom_button.dart';
 
@@ -107,7 +108,7 @@ class ChefOrderDetailScreen extends StatelessWidget {
                 text: 'PRINT EXPEDITE TICKET',
                 icon: const Icon(Icons.print_outlined, color: Colors.white, size: 20),
                 onPressed: () {
-                  Get.snackbar('Print', 'Ticket sent to thermal kitchen printer');
+                  AppSnackbar.info('Print', 'Ticket sent to thermal kitchen printer');
                 },
               ),
             ],

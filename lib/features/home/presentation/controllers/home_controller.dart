@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../domain/entities/banner_entity.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/repositories/home_repository.dart';
@@ -65,6 +66,8 @@ class HomeController extends GetxController {
       }
       featuredRestaurants.assignAll(results[2] as List<RestaurantEntity>);
       popularFoods.assignAll(results[3] as List<FoodItemEntity>);
+    } catch (e) {
+      AppSnackbar.error('Data Loading Error', 'Unable to retrieve menu: $e');
     } finally {
       isLoading.value = false;
     }

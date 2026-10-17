@@ -20,9 +20,12 @@
   - 🛒 **Customer Role**: Browse gourmet foods, customize ingredients/add-ons, manage multi-address books & cards, track active deliveries on animated maps, chat with drivers, and leave ratings.
   - 👨‍🍳 **Chef / Kitchen Portal**: Kitchen KPI dashboard, live incoming order pipeline, order progress manager, recipe/dish catalog, add new dishes, and earnings ledger.
   - 🛵 **Rider / Courier Portal**: Real-time dispatch feed with pickup & drop-off locations, GPS turn-by-turn route canvas painter, delivery slider workflow, and weekly earnings bar charts with instant cashout.
-- **Dynamic Theming**: Full **Dark Mode** & **Light Mode** styling utilizing Figma design tokens, primary warm energetic orange (`#FF7622`), deep navy surfaces (`#181C2E`), and Sen Google Fonts typography.
-- **Local Persistence (`GetStorage`)**: Persistent storage for authentication tokens, saved user profile, cart state, dark mode preference, and active role switching.
-- **Zero Errors / Robust Unit Tests**: Fully analyzed with `flutter analyze` (0 errors) and automated unit test suite verifying validators, currency calculation, and cart entity business logic.
+- **Apple-Grade Micro-Interactions & Physics**: Fluid spring physics (`iosSpring`, `iosEaseOut`), bouncing buttons (`BouncingButton` with 0.96 scale-down & haptic clicks), and iOS `BouncingScrollPhysics` across all screens.
+- **Lazy Loading & Skeleton Shimmer**: Custom `AppShimmer` skeleton system covering banners, horizontal categories, restaurant cards, popular food grid items, and order listings for smooth perceived loading performance.
+- **Glassmorphic Floating Pill Toasts (`AppSnackbar`)**: Universal notification system built on `BackdropFilter` 18px blur, translucent frosted backgrounds, SF glowing status glyphs, and targeted haptic feedback (`mediumImpact`, `heavyImpact`, `selectionClick`).
+- **Animated Vector & Lottie Micro-Interactions**: Custom vector animations for order success checkmarks, moving delivery motorbikes, simmering cooking pots, and bouncing empty carts.
+- **Design Token System**: Complete centralization in `AppColors`, `AppDimens` (spacings `space2`-`space48`, radii `radius6`-`radiusFull`), `AppDurations`, and `AppCurves`—strictly 0 hardcoded design values.
+- **Zero Errors / Robust Unit Tests**: Fully analyzed with `flutter analyze` (0 errors, 0 warnings) and automated test suite verifying validators, currency formatting, cart business logic, and widget rendering.
 
 ---
 

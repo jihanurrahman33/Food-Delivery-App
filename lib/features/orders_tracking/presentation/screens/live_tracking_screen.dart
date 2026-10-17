@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
-import '../../../../core/widgets/custom_app_bar.dart';
+import '../../../../core/widgets/app_animated_illustrations.dart';
 import '../../../../core/widgets/rating_badge.dart';
 import '../../../../routes/app_routes.dart';
 import '../controllers/order_controller.dart';
@@ -115,16 +115,7 @@ class LiveTrackingScreen extends GetView<OrderTrackingController> {
                     // Status Stepper Preview
                     Row(
                       children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLight.withOpacity(isDark ? 0.2 : 0.7),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.delivery_dining_rounded,
-                              color: AppColors.primary, size: 26),
-                        ),
+                        const AnimatedDeliveryBike(size: 48),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/services/mock_data_service.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -24,7 +25,7 @@ class OrderReceiptScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.share_outlined),
             onPressed: () {
-              Get.snackbar('Receipt Shared', 'PDF Invoice exported successfully');
+              AppSnackbar.info('Receipt Shared', 'PDF Invoice exported successfully');
             },
           ),
         ],
@@ -172,7 +173,7 @@ class OrderReceiptScreen extends StatelessWidget {
                 text: 'DOWNLOAD RECEIPT (PDF)',
                 icon: const Icon(Icons.download_rounded, color: Colors.white, size: 20),
                 onPressed: () {
-                  Get.snackbar('Downloaded', 'Invoice saved to your downloads');
+                  AppSnackbar.success('Downloaded', 'Invoice saved to your downloads');
                 },
               ),
               const SizedBox(height: 20),

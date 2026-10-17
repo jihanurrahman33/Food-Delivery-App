@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/currency_formatter.dart';
+import '../../../../core/widgets/app_shimmer.dart';
+import '../../../../core/widgets/bouncing_button.dart';
 import '../../../../core/widgets/rating_badge.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../cart_checkout/presentation/controllers/cart_controller.dart';
-import '../../../restaurant/domain/entities/restaurant_entity.dart';
 import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -27,7 +29,7 @@ class HomeScreen extends GetView<HomeController> {
           onRefresh: controller.loadHomeData,
           color: AppColors.primary,
           child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,11 +247,15 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildBannersCarousel(bool isDark) {
     return Obx(() {
+      if (controller.isLoading.value) {
+        return const BannerSkeleton();
+      }
       if (controller.banners.isEmpty) return const SizedBox.shrink();
 
       return SizedBox(
         height: 165,
         child: PageView.builder(
+          physics: const BouncingScrollPhysics(),
           itemCount: controller.banners.length,
           itemBuilder: (context, index) {
             final banner = controller.banners[index];
@@ -353,16 +359,29 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildCategoriesList(bool isDark) {
     return Obx(() {
+      if (controller.isLoading.value) {
+        return SizedBox(
+          height: 52,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: 6,
+            itemBuilder: (_, __) => const CategoryItemSkeleton(),
+          ),
+        );
+      }
+
       return SizedBox(
         height: 52,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
           itemCount: controller.categories.length,
           itemBuilder: (context, index) {
             final cat = controller.categories[index];
             final isSelected = controller.selectedCategory.value?.id == cat.id;
 
-            return GestureDetector(
+            return BouncingButton(
               onTap: () => controller.selectCategory(cat),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
@@ -408,6 +427,16 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildRestaurantsList(bool isDark) {
     return Obx(() {
+      if (controller.isLoading.value) {
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 3,
+          separatorBuilder: (_, __) => const SizedBox(height: 18),
+          itemBuilder: (_, __) => const RestaurantCardSkeleton(),
+        );
+      }
+
       return ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -415,7 +444,7 @@ class HomeScreen extends GetView<HomeController> {
         separatorBuilder: (_, __) => const SizedBox(height: 18),
         itemBuilder: (context, index) {
           final rest = controller.featuredRestaurants[index];
-          return GestureDetector(
+          return BouncingButton(
             onTap: () => Get.toNamed(AppRoutes.restaurantDetail, arguments: rest),
             child: Container(
               decoration: BoxDecoration(
@@ -517,6 +546,21 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildPopularFoods(CartController cartController, bool isDark) {
     return Obx(() {
+      if (controller.isLoading.value) {
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.72,
+            crossAxisSpacing: 14,
+            mainAxisSpacing: 14,
+          ),
+          itemCount: 4,
+          itemBuilder: (_, __) => const FoodItemCardSkeleton(),
+        );
+      }
+
       return GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -529,7 +573,7 @@ class HomeScreen extends GetView<HomeController> {
         itemCount: controller.popularFoods.length,
         itemBuilder: (context, index) {
           final food = controller.popularFoods[index];
-          return GestureDetector(
+          return BouncingButton(
             onTap: () => Get.toNamed(AppRoutes.foodDetail, arguments: food),
             child: Container(
               decoration: BoxDecoration(
@@ -583,9 +627,10 @@ class HomeScreen extends GetView<HomeController> {
                                 color: isDark ? Colors.white : AppColors.textPrimaryLight,
                               ).copyWith(fontWeight: FontWeight.bold),
                             ),
-                            GestureDetector(
+                            BouncingButton(
                               onTap: () {
                                 cartController.addItem(foodItem: food);
+                                AppSnackbar.cartAdded(foodName: food.name);
                               },
                               child: Container(
                                 width: 32,

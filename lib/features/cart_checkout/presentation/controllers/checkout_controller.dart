@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/services/mock_data_service.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../orders_tracking/domain/entities/order_entity.dart';
 import '../../../orders_tracking/domain/repositories/order_repository.dart';
@@ -79,8 +80,7 @@ class CheckoutController extends GetxController {
   void addAddress() {
     final street = addressStreetController.text.trim();
     if (street.isEmpty) {
-      Get.snackbar('Required', 'Street address is required',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.warning('Required', 'Street address is required');
       return;
     }
 
@@ -105,8 +105,7 @@ class CheckoutController extends GetxController {
     addressNotesController.clear();
 
     Get.back();
-    Get.snackbar('Address Saved', 'New delivery address added successfully',
-        backgroundColor: Colors.green, colorText: Colors.white);
+    AppSnackbar.success('Address Saved', 'New delivery address added successfully');
   }
 
   void addPaymentCard() {
@@ -115,8 +114,7 @@ class CheckoutController extends GetxController {
     final expiry = cardExpiryController.text.trim();
 
     if (holder.isEmpty || number.isEmpty || expiry.isEmpty) {
-      Get.snackbar('Required', 'Please fill in all card details',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.warning('Required', 'Please fill in all card details');
       return;
     }
 
@@ -146,20 +144,17 @@ class CheckoutController extends GetxController {
     cardCvvController.clear();
 
     Get.back();
-    Get.snackbar('Card Added', 'Payment card added successfully',
-        backgroundColor: Colors.green, colorText: Colors.white);
+    AppSnackbar.success('Card Added', 'Payment card added successfully');
   }
 
   Future<void> placeOrder() async {
     if (cartController.items.isEmpty) {
-      Get.snackbar('Cart Empty', 'Your cart is empty',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.warning('Cart Empty', 'Your cart is empty');
       return;
     }
 
     if (selectedAddress.value == null) {
-      Get.snackbar('Address Required', 'Please select a delivery address',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.warning('Address Required', 'Please select a delivery address');
       return;
     }
 
@@ -205,8 +200,7 @@ class CheckoutController extends GetxController {
       // Navigate to success screen
       Get.offNamed(AppRoutes.orderSuccess, arguments: created);
     } catch (e) {
-      Get.snackbar('Order Failed', 'Could not place order: ${e.toString()}',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      AppSnackbar.error('Order Failed', 'Could not place order: ${e.toString()}');
     } finally {
       isPlacingOrder.value = false;
     }

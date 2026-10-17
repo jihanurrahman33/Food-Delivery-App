@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../routes/app_routes.dart';
 import '../controllers/rider_controller.dart';
@@ -97,8 +98,7 @@ class _RiderNavigationScreenState extends State<RiderNavigationScreen>
                   _buildFloatingActionBtn(
                     icon: Icons.my_location_rounded,
                     onTap: () {
-                      Get.snackbar('Recenter GPS', 'Locked to current courier coordinates',
-                          backgroundColor: AppColors.primary, colorText: Colors.white);
+                      AppSnackbar.info('Recenter GPS', 'Locked to current courier coordinates');
                     },
                     isDark: isDark,
                   ),
@@ -106,8 +106,7 @@ class _RiderNavigationScreenState extends State<RiderNavigationScreen>
                   _buildFloatingActionBtn(
                     icon: Icons.volume_up_rounded,
                     onTap: () {
-                      Get.snackbar('Voice Guidance', 'Voice navigation active',
-                          backgroundColor: AppColors.secondary, colorText: Colors.white);
+                      AppSnackbar.info('Voice Guidance', 'Voice navigation active');
                     },
                     isDark: isDark,
                   ),

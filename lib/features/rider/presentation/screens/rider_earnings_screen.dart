@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../controllers/rider_controller.dart';
 
@@ -66,8 +67,7 @@ class _RiderEarningsScreenState extends State<RiderEarningsScreen> {
           IconButton(
             icon: const Icon(Icons.history_rounded),
             onPressed: () {
-              Get.snackbar('Statement', 'Full weekly statement ready to export (PDF)',
-                  backgroundColor: AppColors.secondary, colorText: Colors.white);
+              AppSnackbar.info('Statement', 'Full weekly statement ready to export (PDF)');
             },
             tooltip: 'Payout Statements',
           ),
@@ -317,11 +317,9 @@ class _RiderEarningsScreenState extends State<RiderEarningsScreen> {
                   buttonColor: AppColors.success,
                   onConfirm: () {
                     Get.back();
-                    Get.snackbar(
+                    AppSnackbar.success(
                       'Cashout Initiated! 💸',
                       'Funds will arrive in your bank account shortly.',
-                      backgroundColor: AppColors.success,
-                      colorText: Colors.white,
                     );
                   },
                 );

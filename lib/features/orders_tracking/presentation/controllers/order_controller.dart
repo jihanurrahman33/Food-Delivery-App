@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/repositories/order_repository.dart';
 
@@ -34,8 +35,7 @@ class OrderController extends GetxController {
   Future<void> cancelOrder(String orderId) async {
     await orderRepository.cancelOrder(orderId);
     await loadOrders();
-    Get.snackbar('Order Cancelled', 'Your order #$orderId has been cancelled',
-        backgroundColor: Colors.black87, colorText: Colors.white);
+    AppSnackbar.warning('Order Cancelled', 'Your order #$orderId has been cancelled');
   }
 }
 
@@ -155,11 +155,9 @@ class OrderTrackingController extends GetxController {
       riderRating.value,
       reviewCommentController.text.trim(),
     );
-    Get.snackbar(
+    AppSnackbar.success(
       'Thank you!',
       'Your review has been successfully submitted.',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
     );
     Get.back();
   }

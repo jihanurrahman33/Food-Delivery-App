@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/widgets/rating_badge.dart';
 import '../../../../routes/app_routes.dart';
@@ -64,7 +65,7 @@ class RestaurantDetailScreen extends GetView<RestaurantController> {
                     icon: const Icon(Icons.share_outlined,
                         color: Colors.white, size: 20),
                     onPressed: () {
-                      Get.snackbar('Share', 'Link copied to clipboard!');
+                      AppSnackbar.info('Share', 'Link copied to clipboard!');
                     },
                   ),
                 ),

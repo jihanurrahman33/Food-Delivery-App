@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 
 class HelpSupportScreen extends StatelessWidget {
@@ -75,7 +75,7 @@ class HelpSupportScreen extends StatelessWidget {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () {
-                            Get.snackbar('Support', 'Live chat agent connecting...');
+                            AppSnackbar.info('Support', 'Live chat agent connecting...');
                           },
                           icon: const Icon(Icons.chat_outlined, size: 18),
                           label: const Text('Live Chat'),
@@ -90,7 +90,7 @@ class HelpSupportScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         OutlinedButton.icon(
                           onPressed: () {
-                            Get.snackbar('Hotline', 'Calling support +1-800-BITEFLOW');
+                            AppSnackbar.info('Hotline', 'Calling support +1-800-BITEFLOW');
                           },
                           icon: const Icon(Icons.phone_outlined, size: 18, color: Colors.white),
                           label: const Text('Call Us', style: TextStyle(color: Colors.white)),
