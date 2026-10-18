@@ -27,6 +27,8 @@ class OrderController extends GetxController {
       final history = await orderRepository.getOrderHistory();
       activeOrders.assignAll(active);
       orderHistory.assignAll(history);
+    } catch (_) {
+      // Gracefully handle unauthenticated or offline initial load
     } finally {
       isLoading.value = false;
     }
