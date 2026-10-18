@@ -2,7 +2,7 @@ class AppConstants {
   AppConstants._();
 
   // Backend API URL
-  static const String apiBaseUrl = 'http://localhost:5001/api/v1';
+  static const String apiBaseUrl = 'https://food-delivery-backend-wheat.vercel.app/api/v1';
 
   // Storage Keys
   static const String keyIsFirstTime = 'is_first_time';
