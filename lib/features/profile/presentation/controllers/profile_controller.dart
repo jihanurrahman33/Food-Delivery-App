@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/network/api_client.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_snackbar.dart';
@@ -51,11 +52,14 @@ class ProfileController extends GetxController {
     },
   ].obs;
 
+  ApiClient get apiClient => Get.find<ApiClient>();
+
   @override
   void onInit() {
     super.onInit();
     activeRole.value = storageService.userRole;
     loadUserData();
+    loadNotifications();
   }
 
   Future<void> loadUserData() async {
@@ -66,6 +70,35 @@ class ProfileController extends GetxController {
       emailController.text = user.email;
       phoneController.text = user.phone;
     }
+  }
+
+  Future<void> loadNotifications() async {
+    try {
+      final res = await apiClient.get('/notifications');
+      if (res is List) {
+        final mapped = res.map((n) {
+          final map = n as Map<String, dynamic>;
+          IconData icon = Icons.notifications_rounded;
+          final iconName = map['iconName'] as String?;
+          if (iconName == 'delivery_dining') {
+            icon = Icons.delivery_dining_rounded;
+          } else if (iconName == 'local_offer') {
+            icon = Icons.local_offer_rounded;
+          } else if (iconName == 'check_circle') {
+            icon = Icons.check_circle_rounded;
+          }
+          return {
+            'id': map['id'],
+            'title': map['title'],
+            'description': map['description'],
+            'time': map['time'] ?? 'Just now',
+            'icon': icon,
+            'isRead': map['isRead'] ?? false,
+          };
+        }).toList();
+        notifications.assignAll(mapped);
+      }
+    } catch (_) {}
   }
 
   void switchRole(String role) {
@@ -95,7 +128,10 @@ class ProfileController extends GetxController {
     }
   }
 
-  void markAllNotificationsRead() {
+  Future<void> markAllNotificationsRead() async {
+    try {
+      await apiClient.put('/notifications/mark-read');
+    } catch (_) {}
     for (var n in notifications) {
       n['isRead'] = true;
     }

@@ -65,6 +65,31 @@ class DeliveryRiderEntity extends Equatable {
     required this.licensePlate,
   });
 
+  factory DeliveryRiderEntity.fromJson(Map<String, dynamic> json) {
+    return DeliveryRiderEntity(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? 'Rider',
+      phone: json['phone'] as String? ?? '',
+      avatarUrl: json['avatarUrl'] as String? ??
+          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+      rating: (json['rating'] as num?)?.toDouble() ?? 4.9,
+      vehicleType: json['vehicleType'] as String? ?? 'Motorcycle',
+      licensePlate: json['licensePlate'] as String? ?? 'NYC-5491',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'phone': phone,
+      'avatarUrl': avatarUrl,
+      'rating': rating,
+      'vehicleType': vehicleType,
+      'licensePlate': licensePlate,
+    };
+  }
+
   @override
   List<Object?> get props => [
         id,
@@ -113,6 +138,92 @@ class OrderEntity extends Equatable {
     this.rider,
     this.estimatedDeliveryMinutes = 25,
   });
+
+  static OrderStatus _parseStatus(String? val) {
+    switch (val?.toLowerCase()) {
+      case 'confirmed':
+        return OrderStatus.confirmed;
+      case 'preparing':
+        return OrderStatus.preparing;
+      case 'ontheway':
+      case 'on_the_way':
+        return OrderStatus.onTheWay;
+      case 'delivered':
+        return OrderStatus.delivered;
+      case 'cancelled':
+        return OrderStatus.cancelled;
+      default:
+        return OrderStatus.pending;
+    }
+  }
+
+  static String _statusToString(OrderStatus s) {
+    switch (s) {
+      case OrderStatus.confirmed:
+        return 'confirmed';
+      case OrderStatus.preparing:
+        return 'preparing';
+      case OrderStatus.onTheWay:
+        return 'onTheWay';
+      case OrderStatus.delivered:
+        return 'delivered';
+      case OrderStatus.cancelled:
+        return 'cancelled';
+      case OrderStatus.pending:
+        return 'pending';
+    }
+  }
+
+  factory OrderEntity.fromJson(Map<String, dynamic> json) {
+    final rawItems = json['items'] as List<dynamic>? ?? [];
+    return OrderEntity(
+      id: json['id'] as String? ?? '',
+      restaurantId: json['restaurantId'] as String? ?? '',
+      restaurantName: json['restaurantName'] as String? ?? '',
+      restaurantImageUrl: json['restaurantImageUrl'] as String? ??
+          'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400',
+      items: rawItems
+          .map((i) => CartItemEntity.fromJson(i as Map<String, dynamic>))
+          .toList(),
+      subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0.0,
+      deliveryFee: (json['deliveryFee'] as num?)?.toDouble() ?? 0.0,
+      tax: (json['tax'] as num?)?.toDouble() ?? 0.0,
+      discount: (json['discount'] as num?)?.toDouble() ?? 0.0,
+      total: (json['total'] as num?)?.toDouble() ?? 0.0,
+      status: _parseStatus(json['status'] as String?),
+      createdAt: json['createdAt'] != null
+          ? (DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now())
+          : DateTime.now(),
+      deliveryAddress: json['deliveryAddress'] as String? ?? '',
+      paymentMethod: json['paymentMethod'] as String? ?? 'card',
+      rider: json['rider'] != null && json['rider'] is Map<String, dynamic>
+          ? DeliveryRiderEntity.fromJson(json['rider'] as Map<String, dynamic>)
+          : null,
+      estimatedDeliveryMinutes:
+          (json['estimatedDeliveryMinutes'] as num?)?.toInt() ?? 25,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'restaurantId': restaurantId,
+      'restaurantName': restaurantName,
+      'restaurantImageUrl': restaurantImageUrl,
+      'items': items.map((i) => i.toJson()).toList(),
+      'subtotal': subtotal,
+      'deliveryFee': deliveryFee,
+      'tax': tax,
+      'discount': discount,
+      'total': total,
+      'status': _statusToString(status),
+      'createdAt': createdAt.toIso8601String(),
+      'deliveryAddress': deliveryAddress,
+      'paymentMethod': paymentMethod,
+      'rider': rider?.toJson(),
+      'estimatedDeliveryMinutes': estimatedDeliveryMinutes,
+    };
+  }
 
   OrderEntity copyWith({
     String? id,
@@ -188,6 +299,32 @@ class ChatMessageEntity extends Equatable {
     required this.timestamp,
     this.isRead = true,
   });
+
+  factory ChatMessageEntity.fromJson(Map<String, dynamic> json, {String currentUserId = ''}) {
+    final senderId = json['senderId'] as String? ?? '';
+    final senderRole = json['senderRole'] as String? ?? '';
+    final isSender = json['isSender'] as bool? ??
+        (currentUserId.isNotEmpty ? senderId == currentUserId : senderRole == 'customer');
+    return ChatMessageEntity(
+      id: json['id'] as String? ?? '',
+      text: json['text'] as String? ?? '',
+      isSender: isSender,
+      timestamp: json['timestamp'] != null
+          ? (DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now())
+          : DateTime.now(),
+      isRead: json['isRead'] as bool? ?? true,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'text': text,
+      'isSender': isSender,
+      'timestamp': timestamp.toIso8601String(),
+      'isRead': isRead,
+    };
+  }
 
   @override
   List<Object?> get props => [id, text, isSender, timestamp, isRead];

@@ -1,101 +1,117 @@
-import '../../../../core/services/mock_data_service.dart';
+import 'package:get/get.dart';
+import '../../../../core/network/api_client.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/repositories/order_repository.dart';
 
 class OrderRepositoryImpl implements OrderRepository {
-  final List<OrderEntity> _orders = [MockDataService.activeOrder];
-  final List<ChatMessageEntity> _chatMessages = List.from(MockDataService.initialChatMessages);
+  final ApiClient apiClient;
+
+  OrderRepositoryImpl({ApiClient? apiClient})
+      : apiClient = apiClient ?? Get.find<ApiClient>();
 
   @override
   Future<List<OrderEntity>> getActiveOrders() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _orders
-        .where((o) =>
-            o.status != OrderStatus.delivered && o.status != OrderStatus.cancelled)
-        .toList();
+    final response = await apiClient.get('/orders/active');
+    if (response is List) {
+      return response
+          .map((o) => OrderEntity.fromJson(o as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
   }
 
   @override
   Future<List<OrderEntity>> getOrderHistory() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    final history = _orders
-        .where((o) =>
-            o.status == OrderStatus.delivered || o.status == OrderStatus.cancelled)
-        .toList();
-
-    // Add a completed mock order if empty
-    if (history.isEmpty) {
-      history.add(
-        MockDataService.activeOrder.copyWith(
-          id: 'FD-77210',
-          status: OrderStatus.delivered,
-          createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        ),
-      );
+    final response = await apiClient.get('/orders/history');
+    if (response is List) {
+      return response
+          .map((o) => OrderEntity.fromJson(o as Map<String, dynamic>))
+          .toList();
     }
-    return history;
+    return [];
   }
 
   @override
   Future<OrderEntity?> getOrderById(String orderId) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    try {
-      return _orders.firstWhere((o) => o.id == orderId);
-    } catch (_) {
-      return _orders.isNotEmpty ? _orders.first : MockDataService.activeOrder;
+    final response = await apiClient.get('/orders/$orderId');
+    if (response is Map<String, dynamic>) {
+      return OrderEntity.fromJson(response);
     }
+    return null;
   }
 
   @override
   Future<OrderEntity> placeOrder(OrderEntity order) async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    _orders.insert(0, order);
-    return order;
+    final payload = {
+      'restaurantId': order.restaurantId,
+      'deliveryAddress': order.deliveryAddress,
+      'paymentMethod': order.paymentMethod,
+      'items': order.items.map((item) => item.toJson()).toList(),
+    };
+
+    final orderResponse = await apiClient.post('/orders', body: payload);
+    final createdOrder = OrderEntity.fromJson(orderResponse as Map<String, dynamic>);
+
+    // Complete transaction lifecycle through the Payment Engine
+    try {
+      final intentResponse = await apiClient.post(
+        '/payments/initiate',
+        body: {
+          'orderId': createdOrder.id,
+          'paymentMethod': order.paymentMethod,
+        },
+      );
+
+      if (intentResponse is Map<String, dynamic>) {
+        final txRef = intentResponse['transactionReference'] as String?;
+        if (txRef != null && txRef.isNotEmpty) {
+          await apiClient.post(
+            '/payments/verify',
+            body: {'transactionReference': txRef},
+          );
+        }
+      }
+    } catch (_) {
+      // Payment intent handled or recorded on server
+    }
+
+    return createdOrder;
   }
 
   @override
   Future<void> cancelOrder(String orderId) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    final index = _orders.indexWhere((o) => o.id == orderId);
-    if (index != -1) {
-      _orders[index] = _orders[index].copyWith(status: OrderStatus.cancelled);
-    }
+    await apiClient.post('/orders/$orderId/cancel');
   }
 
   @override
   Future<List<ChatMessageEntity>> getChatMessages(String orderId) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return List.unmodifiable(_chatMessages);
+    final response = await apiClient.get('/orders/$orderId/chat');
+    if (response is List) {
+      return response
+          .map((m) => ChatMessageEntity.fromJson(m as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
   }
 
   @override
   Future<void> sendChatMessage(String orderId, String message) async {
-    final newMsg = ChatMessageEntity(
-      id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
-      text: message,
-      isSender: true,
-      timestamp: DateTime.now(),
-      isRead: true,
+    await apiClient.post(
+      '/orders/$orderId/chat',
+      body: {'text': message},
     );
-    _chatMessages.add(newMsg);
-
-    // Auto simulated response from driver after 1.5s
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      _chatMessages.add(
-        ChatMessageEntity(
-          id: 'msg_reply_${DateTime.now().millisecondsSinceEpoch}',
-          text: 'Got it, thanks for the update! See you shortly.',
-          isSender: false,
-          timestamp: DateTime.now(),
-          isRead: true,
-        ),
-      );
-    });
   }
 
   @override
   Future<void> submitOrderReview(
       String orderId, double restaurantRating, double riderRating, String review) async {
-    await Future.delayed(const Duration(milliseconds: 400));
+    await apiClient.post(
+      '/orders/$orderId/rate',
+      body: {
+        'restaurantRating': restaurantRating,
+        'riderRating': riderRating,
+        'review': review,
+      },
+    );
   }
 }

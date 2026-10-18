@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'core/network/api_client.dart';
 import 'core/services/storage_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/data/datasources/auth_local_data_source.dart';
@@ -36,6 +37,9 @@ void main() async {
     () => StorageService().init(),
     permanent: true,
   );
+
+  // Initialize Core ApiClient
+  Get.put<ApiClient>(ApiClient(), permanent: true);
 
   // Global Core & Auth Services
   final authLocalDataSource = Get.put<AuthLocalDataSource>(

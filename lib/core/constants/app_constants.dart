@@ -1,6 +1,9 @@
 class AppConstants {
   AppConstants._();
 
+  // Backend API URL
+  static const String apiBaseUrl = 'http://localhost:5001/api/v1';
+
   // Storage Keys
   static const String keyIsFirstTime = 'is_first_time';
   static const String keyIsLoggedIn = 'is_logged_in';

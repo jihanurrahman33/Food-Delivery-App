@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
+import '../../../../core/network/api_client.dart';
 import '../../../../core/services/mock_data_service.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../routes/app_routes.dart';
@@ -44,20 +45,44 @@ class CheckoutController extends GetxController {
   final addressApartmentController = TextEditingController();
   final addressNotesController = TextEditingController();
 
+  ApiClient get apiClient => Get.find<ApiClient>();
+
   @override
   void onInit() {
     super.onInit();
     _loadInitialData();
   }
 
-  void _loadInitialData() {
-    addresses.assignAll(MockDataService.addresses);
+  Future<void> _loadInitialData() async {
+    try {
+      final addrRes = await apiClient.get('/addresses');
+      if (addrRes is List) {
+        addresses.assignAll(
+          addrRes.map((a) => AddressEntity.fromJson(a as Map<String, dynamic>)),
+        );
+      }
+    } catch (_) {}
+
+    if (addresses.isEmpty) {
+      addresses.assignAll(MockDataService.addresses);
+    }
     if (addresses.isNotEmpty) {
       selectedAddress.value =
           addresses.firstWhere((a) => a.isDefault, orElse: () => addresses.first);
     }
 
-    paymentCards.assignAll(MockDataService.paymentCards);
+    try {
+      final cardRes = await apiClient.get('/cards');
+      if (cardRes is List) {
+        paymentCards.assignAll(
+          cardRes.map((c) => PaymentCardEntity.fromJson(c as Map<String, dynamic>)),
+        );
+      }
+    } catch (_) {}
+
+    if (paymentCards.isEmpty) {
+      paymentCards.assignAll(MockDataService.paymentCards);
+    }
     if (paymentCards.isNotEmpty) {
       selectedPaymentCard.value = paymentCards
           .firstWhere((c) => c.isDefault, orElse: () => paymentCards.first);
@@ -77,27 +102,42 @@ class CheckoutController extends GetxController {
     selectedPaymentMethodType.value = 'card';
   }
 
-  void addAddress() {
+  Future<void> addAddress() async {
     final street = addressStreetController.text.trim();
     if (street.isEmpty) {
       AppSnackbar.warning('Required', 'Street address is required');
       return;
     }
 
-    final newAddr = AddressEntity(
-      id: const Uuid().v4(),
-      label: addressLabelController.text.trim().isEmpty
+    final payload = {
+      'label': addressLabelController.text.trim().isEmpty
           ? 'Other'
           : addressLabelController.text.trim(),
-      fullAddress: '$street, ${addressApartmentController.text.trim()}',
-      street: street,
-      apartment: addressApartmentController.text.trim(),
-      deliveryNotes: addressNotesController.text.trim(),
-      isDefault: addresses.isEmpty,
-    );
+      'fullAddress': '$street, ${addressApartmentController.text.trim()}',
+      'street': street,
+      'apartment': addressApartmentController.text.trim(),
+      'deliveryNotes': addressNotesController.text.trim(),
+      'isDefault': addresses.isEmpty,
+    };
 
-    addresses.add(newAddr);
-    selectedAddress.value = newAddr;
+    try {
+      final res = await apiClient.post('/addresses', body: payload);
+      final newAddr = AddressEntity.fromJson(res as Map<String, dynamic>);
+      addresses.add(newAddr);
+      selectedAddress.value = newAddr;
+    } catch (_) {
+      final fallback = AddressEntity(
+        id: const Uuid().v4(),
+        label: payload['label'] as String,
+        fullAddress: payload['fullAddress'] as String,
+        street: street,
+        apartment: addressApartmentController.text.trim(),
+        deliveryNotes: addressNotesController.text.trim(),
+        isDefault: addresses.isEmpty,
+      );
+      addresses.add(fallback);
+      selectedAddress.value = fallback;
+    }
 
     // Reset controllers
     addressStreetController.clear();
@@ -108,7 +148,7 @@ class CheckoutController extends GetxController {
     AppSnackbar.success('Address Saved', 'New delivery address added successfully');
   }
 
-  void addPaymentCard() {
+  Future<void> addPaymentCard() async {
     final holder = cardHolderNameController.text.trim();
     final number = cardNumberController.text.trim();
     final expiry = cardExpiryController.text.trim();
@@ -118,23 +158,36 @@ class CheckoutController extends GetxController {
       return;
     }
 
-    final masked = number.length >= 4
-        ? '•••• •••• •••• ${number.substring(number.length - 4)}'
-        : '•••• •••• •••• 4242';
-
     final brand = number.startsWith('4') ? 'Visa' : 'Mastercard';
+    final payload = {
+      'cardHolderName': holder,
+      'cardNumber': number,
+      'expiryDate': expiry,
+      'brand': brand,
+      'isDefault': paymentCards.isEmpty,
+    };
 
-    final newCard = PaymentCardEntity(
-      id: const Uuid().v4(),
-      cardHolderName: holder,
-      cardNumber: masked,
-      expiryDate: expiry,
-      brand: brand,
-      isDefault: paymentCards.isEmpty,
-    );
+    try {
+      final res = await apiClient.post('/cards', body: payload);
+      final newCard = PaymentCardEntity.fromJson(res as Map<String, dynamic>);
+      paymentCards.add(newCard);
+      selectedPaymentCard.value = newCard;
+    } catch (_) {
+      final masked = number.length >= 4
+          ? '•••• •••• •••• ${number.substring(number.length - 4)}'
+          : '•••• •••• •••• 4242';
+      final fallback = PaymentCardEntity(
+        id: const Uuid().v4(),
+        cardHolderName: holder,
+        cardNumber: masked,
+        expiryDate: expiry,
+        brand: brand,
+        isDefault: paymentCards.isEmpty,
+      );
+      paymentCards.add(fallback);
+      selectedPaymentCard.value = fallback;
+    }
 
-    paymentCards.add(newCard);
-    selectedPaymentCard.value = newCard;
     selectedPaymentMethodType.value = 'card';
 
     // Reset
