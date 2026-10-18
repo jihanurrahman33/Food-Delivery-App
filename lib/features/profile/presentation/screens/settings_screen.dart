@@ -26,11 +26,13 @@ class SettingsScreen extends GetView<SettingsController> {
               const SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.cardDark : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: isDark ? [] : AppColors.cardShadow,
                 ),
-                child: Column(
+                child: Material(
+                  color: isDark ? AppColors.cardDark : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Column(
                   children: [
                     Obx(
                       () => SwitchListTile(
@@ -74,34 +76,38 @@ class SettingsScreen extends GetView<SettingsController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+            ),
+            const SizedBox(height: 24),
 
               // Security & Auth
               _buildSectionTitle('SECURITY', isDark),
               const SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.cardDark : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: isDark ? [] : AppColors.cardShadow,
                 ),
-                child: Obx(
-                  () => SwitchListTile(
-                    title: Text(
-                      'Biometric / Face ID Login',
-                      style: AppTextStyles.subtitle2(
-                        color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                child: Material(
+                  color: isDark ? AppColors.cardDark : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Obx(
+                    () => SwitchListTile(
+                      title: Text(
+                        'Biometric / Face ID Login',
+                        style: AppTextStyles.subtitle2(
+                          color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      'Faster login with biometric sensors',
-                      style: AppTextStyles.caption(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      subtitle: Text(
+                        'Faster login with biometric sensors',
+                        style: AppTextStyles.caption(
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                        ),
                       ),
+                      activeColor: AppColors.primary,
+                      value: controller.biometricLogin.value,
+                      onChanged: controller.toggleBiometric,
                     ),
-                    activeColor: AppColors.primary,
-                    value: controller.biometricLogin.value,
-                    onChanged: controller.toggleBiometric,
                   ),
                 ),
               ),
@@ -112,11 +118,13 @@ class SettingsScreen extends GetView<SettingsController> {
               const SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.cardDark : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: isDark ? [] : AppColors.cardShadow,
                 ),
-                child: Column(
+                child: Material(
+                  color: isDark ? AppColors.cardDark : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Column(
                   children: [
                     ListTile(
                       leading: const Icon(Icons.language_rounded, color: AppColors.primary),
@@ -184,7 +192,8 @@ class SettingsScreen extends GetView<SettingsController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+            ),
+            const SizedBox(height: 32),
 
               Center(
                 child: Text(

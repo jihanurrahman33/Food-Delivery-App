@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/widgets/app_avatar.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/rating_badge.dart';
 import '../../domain/entities/restaurant_entity.dart';
@@ -128,9 +129,9 @@ class RestaurantReviewsScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          CircleAvatar(
+                          AppAvatar(
                             radius: 20,
-                            backgroundImage: NetworkImage(rev['avatar'] as String),
+                            imageUrl: rev['avatar'] as String?,
                           ),
                           const SizedBox(width: 12),
                           Expanded(

@@ -8,7 +8,10 @@ import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/widgets/app_shimmer.dart';
 import '../../../../core/widgets/bouncing_button.dart';
 import '../../../../core/widgets/rating_badge.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../auth/data/datasources/auth_local_data_source.dart';
+import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../cart_checkout/presentation/controllers/cart_controller.dart';
 import '../controllers/home_controller.dart';
@@ -19,7 +22,20 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final authController = Get.find<AuthController>();
+    final authController = Get.isRegistered<AuthController>()
+        ? Get.find<AuthController>()
+        : Get.put<AuthController>(
+            AuthController(
+              authRepository: Get.isRegistered<AuthRepositoryImpl>()
+                  ? Get.find<AuthRepositoryImpl>()
+                  : AuthRepositoryImpl(
+                      localDataSource: AuthLocalDataSourceImpl(
+                        storageService: Get.find<StorageService>(),
+                      ),
+                    ),
+            ),
+            permanent: true,
+          );
     final cartController = Get.find<CartController>();
 
     return Scaffold(
@@ -263,62 +279,84 @@ class HomeScreen extends GetView<HomeController> {
               margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(banner.imageUrl),
-                  fit: BoxFit.cover,
-                ),
+                color: isDark ? AppColors.cardDark : AppColors.primary.withOpacity(0.08),
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withOpacity(0.75),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        banner.discountText,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: banner.imageUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
+                      child: const Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      banner.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    errorWidget: (context, url, error) => Container(
+                      color: isDark ? AppColors.surfaceDark : AppColors.primary.withOpacity(0.12),
+                      child: const Center(
+                        child: Icon(Icons.fastfood_rounded, size: 48, color: AppColors.primary),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      banner.subtitle,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.75),
+                          Colors.transparent,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                       ),
                     ),
-                  ],
-                ),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            banner.discountText,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          banner.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          banner.subtitle,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -465,6 +503,22 @@ class HomeScreen extends GetView<HomeController> {
                           height: 160,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            height: 160,
+                            color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
+                            child: const Center(
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            height: 160,
+                            color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
+                            child: Icon(Icons.restaurant_rounded, color: Colors.grey.shade400, size: 48),
+                          ),
                         ),
                       ),
                       Positioned(
@@ -552,7 +606,7 @@ class HomeScreen extends GetView<HomeController> {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.72,
+            childAspectRatio: 0.64,
             crossAxisSpacing: 14,
             mainAxisSpacing: 14,
           ),
@@ -566,7 +620,7 @@ class HomeScreen extends GetView<HomeController> {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.72,
+          childAspectRatio: 0.64,
           crossAxisSpacing: 14,
           mainAxisSpacing: 14,
         ),
@@ -591,6 +645,22 @@ class HomeScreen extends GetView<HomeController> {
                       height: 120,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        height: 120,
+                        color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 120,
+                        color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
+                        child: Icon(Icons.fastfood_rounded, color: Colors.grey.shade400, size: 36),
+                      ),
                     ),
                   ),
                   Padding(

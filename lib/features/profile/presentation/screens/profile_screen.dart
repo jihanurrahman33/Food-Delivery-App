@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/widgets/app_avatar.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../../core/services/storage_service.dart';
+import '../../../auth/data/datasources/auth_local_data_source.dart';
+import '../../../auth/data/repositories/auth_repository_impl.dart';
+import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 
@@ -13,8 +18,31 @@ class ProfileScreen extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final authController = Get.find<AuthController>();
-    final settingsController = Get.find<SettingsController>();
+    final storageService = Get.find<StorageService>();
+    final authRepo = Get.isRegistered<AuthRepository>()
+        ? Get.find<AuthRepository>()
+        : Get.put<AuthRepository>(
+            AuthRepositoryImpl(
+              localDataSource: AuthLocalDataSourceImpl(storageService: storageService),
+            ),
+          );
+
+    final authController = Get.isRegistered<AuthController>()
+        ? Get.find<AuthController>()
+        : Get.put<AuthController>(AuthController(authRepository: authRepo));
+
+    if (!Get.isRegistered<ProfileController>()) {
+      Get.put<ProfileController>(ProfileController(
+        authRepository: authRepo,
+        storageService: storageService,
+      ));
+    }
+
+    final settingsController = Get.isRegistered<SettingsController>()
+        ? Get.find<SettingsController>()
+        : Get.put<SettingsController>(
+            SettingsController(storageService: storageService),
+          );
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
@@ -53,14 +81,9 @@ class ProfileScreen extends GetView<ProfileController> {
                   ),
                   child: Row(
                     children: [
-                      CircleAvatar(
+                      AppAvatar(
+                        imageUrl: user?.avatarUrl,
                         radius: 36,
-                        backgroundImage: user?.avatarUrl != null
-                            ? CachedNetworkImageProvider(user!.avatarUrl!)
-                            : null,
-                        child: user?.avatarUrl == null
-                            ? const Icon(Icons.person, size: 36)
-                            : null,
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -178,11 +201,13 @@ class ProfileScreen extends GetView<ProfileController> {
               // Menu Links
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.cardDark : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: isDark ? [] : AppColors.cardShadow,
                 ),
-                child: Column(
+                child: Material(
+                  color: isDark ? AppColors.cardDark : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Column(
                   children: [
                     _buildMenuItem(
                       icon: Icons.favorite_border_rounded,
@@ -272,16 +297,19 @@ class ProfileScreen extends GetView<ProfileController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+            ),
+            const SizedBox(height: 20),
 
               // Log out button
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.cardDark : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: isDark ? [] : AppColors.cardShadow,
                 ),
-                child: ListTile(
+                child: Material(
+                  color: isDark ? AppColors.cardDark : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  child: ListTile(
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -307,7 +335,8 @@ class ProfileScreen extends GetView<ProfileController> {
                   },
                 ),
               ),
-              const SizedBox(height: 32),
+            ),
+            const SizedBox(height: 32),
             ],
           ),
         ),

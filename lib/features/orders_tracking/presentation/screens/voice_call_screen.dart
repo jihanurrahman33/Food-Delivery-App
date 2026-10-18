@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../core/widgets/app_avatar.dart';
 import '../controllers/order_controller.dart';
 
 class VoiceCallScreen extends GetView<OrderTrackingController> {
@@ -44,11 +45,10 @@ class VoiceCallScreen extends GetView<OrderTrackingController> {
                         color: AppColors.primary.withOpacity(0.3),
                       ),
                     ),
-                    const CircleAvatar(
+                    const AppAvatar(
                       radius: 54,
-                      backgroundImage: NetworkImage(
-                        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                      ),
+                      imageUrl:
+                          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
                     ),
                   ],
                 ),

@@ -3,6 +3,7 @@ import '../../../../core/services/storage_service.dart';
 import '../../../auth/data/datasources/auth_local_data_source.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileBinding extends Bindings {
@@ -16,6 +17,11 @@ class ProfileBinding extends Bindings {
     if (!Get.isRegistered<AuthRepository>()) {
       Get.lazyPut<AuthRepository>(
         () => AuthRepositoryImpl(localDataSource: Get.find<AuthLocalDataSource>()),
+      );
+    }
+    if (!Get.isRegistered<AuthController>()) {
+      Get.lazyPut<AuthController>(
+        () => AuthController(authRepository: Get.find<AuthRepository>()),
       );
     }
     Get.lazyPut<ProfileController>(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../core/widgets/app_animated_illustrations.dart';
+import '../../../../core/widgets/app_avatar.dart';
 import '../../../../core/widgets/rating_badge.dart';
 import '../../../../routes/app_routes.dart';
 import '../controllers/order_controller.dart';
@@ -151,11 +152,10 @@ class LiveTrackingScreen extends GetView<OrderTrackingController> {
                     // Courier Rider Card
                     Row(
                       children: [
-                        const CircleAvatar(
+                        const AppAvatar(
                           radius: 24,
-                          backgroundImage: NetworkImage(
-                            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                          ),
+                          imageUrl:
+                              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
                         ),
                         const SizedBox(width: 14),
                         Expanded(

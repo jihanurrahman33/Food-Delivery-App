@@ -233,11 +233,13 @@ class ChefDashboardScreen extends GetView<ChefController> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(18),
         boxShadow: isDark ? [] : AppColors.cardShadow,
       ),
-      child: ListTile(
+      child: Material(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         leading: Container(
           padding: const EdgeInsets.all(10),
@@ -262,6 +264,7 @@ class ChefDashboardScreen extends GetView<ChefController> {
         trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey),
         onTap: onTap,
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -153,15 +153,13 @@ class CategoryItemSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppShimmer(
+    return const AppShimmer(
       child: Padding(
-        padding: const EdgeInsets.only(right: AppDimens.space12),
-        child: Column(
-          children: const [
-            ShimmerBox(width: 60, height: 60, borderRadius: AppDimens.radiusFull),
-            SizedBox(height: AppDimens.space8),
-            ShimmerBox(width: 48, height: 12, borderRadius: AppDimens.radius6),
-          ],
+        padding: EdgeInsets.only(right: AppDimens.space12),
+        child: ShimmerBox(
+          width: 90,
+          height: 48,
+          borderRadius: 30,
         ),
       ),
     );

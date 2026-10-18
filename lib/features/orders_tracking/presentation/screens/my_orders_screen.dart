@@ -5,6 +5,8 @@ import '../../../../core/theme/text_styles.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../routes/app_routes.dart';
+import '../../data/repositories/order_repository_impl.dart';
+import '../../domain/repositories/order_repository.dart';
 import '../../domain/entities/order_entity.dart';
 import '../controllers/order_controller.dart';
 import 'empty_orders_screen.dart';
@@ -34,7 +36,15 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<OrderController>();
+    final controller = Get.isRegistered<OrderController>()
+        ? Get.find<OrderController>()
+        : Get.put<OrderController>(
+            OrderController(
+              orderRepository: Get.isRegistered<OrderRepository>()
+                  ? Get.find<OrderRepository>()
+                  : OrderRepositoryImpl(),
+            ),
+          );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(

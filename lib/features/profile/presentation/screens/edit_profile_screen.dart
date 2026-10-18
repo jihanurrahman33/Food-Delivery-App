@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/app_avatar.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
@@ -29,11 +30,10 @@ class EditProfileScreen extends GetView<ProfileController> {
                       Center(
                         child: Stack(
                           children: [
-                            const CircleAvatar(
+                            const AppAvatar(
                               radius: 54,
-                              backgroundImage: NetworkImage(
-                                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
-                              ),
+                              imageUrl:
+                                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
                             ),
                             Positioned(
                               bottom: 0,

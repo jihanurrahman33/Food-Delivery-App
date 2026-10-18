@@ -523,7 +523,6 @@ class _ScreenCatalogScreenState extends State<ScreenCatalogScreen> {
                       final item = filteredList[index];
                       return Container(
                         decoration: BoxDecoration(
-                          color: isDark ? AppColors.darkCard : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -533,7 +532,10 @@ class _ScreenCatalogScreenState extends State<ScreenCatalogScreen> {
                             ),
                           ],
                         ),
-                        child: ListTile(
+                        child: Material(
+                          color: isDark ? AppColors.darkCard : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          child: ListTile(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                           leading: Container(
                             padding: const EdgeInsets.all(10),
@@ -590,8 +592,9 @@ class _ScreenCatalogScreenState extends State<ScreenCatalogScreen> {
                             }
                           },
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
                   ),
           ),
         ],
